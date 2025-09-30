@@ -87,9 +87,23 @@ export default function QuestionCard({ question, index, onUpdate, onDelete }: Qu
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor={`type-${question.id}`} className="text-black">
-            Question Type
-          </Label>
+          <div className="flex items-center justify-between gap-3">
+            <Label htmlFor={`type-${question.id}`} className="text-black">
+              Question Type
+            </Label>
+            <div className="flex items-center gap-2">
+              <Label htmlFor={`required-${question.id}`} className="text-xs text-black/60">
+                Required
+              </Label>
+              <Switch
+                id={`required-${question.id}`}
+                checked={question.required}
+                onCheckedChange={(checked) => onUpdate(question.id, { required: checked })}
+                className="h-4 w-8 [&>span]:h-4 [&>span]:w-4"
+              />
+            </div>
+          </div>
+
           <Select
             value={question.type}
             onValueChange={(value: QuestionType) => {
@@ -150,14 +164,16 @@ export default function QuestionCard({ question, index, onUpdate, onDelete }: Qu
           </div>
         )}
 
-        <div className="flex items-center justify-between rounded-lg border border-black/10 bg-black/5 p-3">
-          <Label htmlFor={`required-${question.id}`} className="text-sm text-black">
-            Required Question
+        <div className="space-y-2">
+          <Label htmlFor={`placeholder-${question.id}`} className="text-black">
+            Placeholder
           </Label>
-          <Switch
-            id={`required-${question.id}`}
-            checked={question.required}
-            onCheckedChange={(checked) => onUpdate(question.id, { required: checked })}
+          <Input
+            id={`placeholder-${question.id}`}
+            placeholder="Enter a placeholder shown in the input"
+            value={question.placeholder ?? ""}
+            onChange={(e) => onUpdate(question.id, { placeholder: e.target.value })}
+            className="border-black/20 bg-white text-black placeholder:text-black/40"
           />
         </div>
       </div>

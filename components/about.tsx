@@ -46,12 +46,12 @@ export default function About() {
   return (
     <section ref={sectionRef} className="bg-secondary px-6 py-24 md:py-32 lg:py-40">
       <div className="mx-auto max-w-7xl">
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+        <div className="grid items-center gap-10 md:gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Image */}
           <div ref={imageRef} className="relative overflow-hidden rounded-2xl">
             <div className="aspect-[4/3] bg-gradient-to-br from-primary/20 to-primary/5">
               <Image
-                src="/modern-minimalist-workspace-with-clean-design.jpg"
+                src="https://res.cloudinary.com/ddf4mvmbe/image/upload/v1759263624/office_rm35pi.jpg"
                 alt="About our company"
                 width={800}
                 height={600}
@@ -61,15 +61,15 @@ export default function About() {
           </div>
 
           {/* Content */}
-          <div ref={contentRef} className="space-y-6">
-            <h2 className="text-balance text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
+          <div ref={contentRef} className="space-y-5 md:space-y-6">
+            <h2 className="text-balance text-3xl font-bold tracking-tight text-foreground md:text-4xl lg:text-5xl">
               Why Formify?
             </h2>
-            <p className="text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
+            <p className="text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
               Formify helps you collect feedback, run surveys, and manage registrations with ease. Whether you&apos;re a
               business, educator, or creator, Formify gives you the tools to connect with your audience seamlessly.
             </p>
-            <p className="text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
+            <p className="text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
               With years of expertise and a passion for innovation, we&apos;ve helped countless businesses transform
               their digital presence and achieve remarkable results.
             </p>
@@ -77,7 +77,7 @@ export default function About() {
               <Button
                 variant="outline"
                 size="lg"
-                className="group h-12 rounded-xl border-2 border-primary bg-transparent px-8 text-base font-semibold text-primary transition-all hover:bg-primary hover:text-primary-foreground hover:shadow-lg"
+                className="group h-11 rounded-xl border-2 border-primary bg-transparent px-6 text-sm font-semibold text-primary transition-all hover:bg-primary hover:text-primary-foreground hover:shadow-lg md:h-12 md:px-8 md:text-base"
               >
                 Learn more about us
                 <svg

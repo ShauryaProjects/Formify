@@ -8,7 +8,7 @@ import QuestionList from "./question-list"
 import FormPreviewLive from "./form-preview-live"
 import StepsPanel from "./steps-panel"
 import type { Step } from "./steps-panel"
-import { ArrowLeft, Save } from "lucide-react"
+import { ArrowLeft, Save, Eye, X } from "lucide-react"
 import Link from "next/link"
 
 export type QuestionType = "short" | "paragraph" | "multiple" | "checkbox" | "dropdown"
@@ -18,6 +18,7 @@ export interface Question {
   text: string
   type: QuestionType
   required: boolean
+  placeholder?: string
   options?: string[]
   stepId: string // Added stepId to associate questions with steps
 }
@@ -40,6 +41,7 @@ export default function FormBuilder() {
     steps: [{ id: "step-1", title: "Step 1" }],
   })
   const [savedFormId, setSavedFormId] = useState<string | null>(null)
+  const [isPreviewOpen, setPreviewOpen] = useState(false)
 
   const activeStepQuestions = formData.questions.filter((q) => q.stepId === activeStepId)
 
@@ -74,7 +76,7 @@ export default function FormBuilder() {
       </header>
 
       <div className="container mx-auto px-6 pt-24 pb-12">
-        <div className="grid grid-cols-[20%_55%_25%] gap-0 h-[calc(100vh-8rem)]">
+        <div className="grid grid-cols-1 lg:grid-cols-[20%_55%_25%] gap-0 h-[calc(100vh-8rem)]">
           {/* Left Column: Steps Panel (20%) */}
           <div className="overflow-y-auto pr-6 border-r border-black/10">
             <StepsPanel
@@ -132,10 +134,10 @@ export default function FormBuilder() {
             </div>
           </div>
 
-          {/* Right Column: Live Preview (25%) */}
-          <div className="overflow-y-auto pl-6">
+          {/* Right Column: Live Preview (25%) - hidden on mobile */}
+          <div className="overflow-y-auto pl-6 hidden lg:block">
             <div className="sticky top-0 mb-4 pb-4 bg-white/80 backdrop-blur-sm border-b border-black/10">
-              <h2 className="text-lg font-semibold text-black">Live Preview</h2>
+              <h2 className="text-lg font-semibold text-black">Preview</h2>
               <p className="text-sm text-black/60">
                 Step {steps.findIndex((s) => s.id === activeStepId) + 1} of {steps.length}
               </p>
@@ -149,6 +151,47 @@ export default function FormBuilder() {
           </div>
         </div>
       </div>
+
+      {/* Floating mobile button to open preview */}
+      <div className="lg:hidden fixed bottom-5 right-5 z-50">
+        <Button
+          onClick={() => setPreviewOpen(true)}
+          className="rounded-xl bg-black text-white shadow-xl px-5 py-6 h-auto hover:bg-black/90 transition-transform duration-200 hover:scale-105"
+        >
+          <Eye className="mr-2 h-4 w-4" />
+          View Preview
+        </Button>
+      </div>
+
+      {/* Mobile Preview Modal */}
+      {isPreviewOpen && (
+        <div className="lg:hidden fixed inset-0 z-50">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" />
+          <div className="absolute inset-x-0 bottom-0 top-0 flex items-end">
+            <div className="w-full rounded-t-2xl bg-white shadow-2xl transition-transform duration-300 ease-out">
+              <div className="flex items-center justify-between border-b border-black/10 px-4 py-3">
+                <div className="font-semibold text-black">Preview</div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setPreviewOpen(false)}
+                  className="text-black/60 hover:text-black hover:bg-black/5"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+              <div className="max-h-[calc(100vh-6rem)] overflow-y-auto p-4">
+                <FormPreviewLive
+                  formData={formData}
+                  activeStepId={activeStepId}
+                  steps={steps}
+                  onStepChange={setActiveStepId}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

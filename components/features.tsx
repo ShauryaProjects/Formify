@@ -111,7 +111,7 @@ export default function Features() {
           Built for excellence
         </h2>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:gap-12">
+        <div className="grid gap-6 sm:gap-8 md:grid-cols-2 lg:gap-12">
           {features.map((feature, index) => (
             <Card
               key={index}

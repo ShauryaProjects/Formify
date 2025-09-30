@@ -50,6 +50,7 @@ export default function QuestionList({ questions, onQuestionsChange, stepId }: Q
       text: "",
       type: "short",
       required: false,
+      placeholder: "",
       stepId: stepId,
     }
     onQuestionsChange([...questions, newQuestion])
@@ -99,15 +100,6 @@ export default function QuestionList({ questions, onQuestionsChange, stepId }: Q
 
   return (
     <div className="space-y-6">
-      <Button
-        ref={buttonRef}
-        onClick={addQuestion}
-        className="w-full rounded-2xl border-2 border-dashed border-black/20 bg-transparent py-8 text-black hover:border-black/40 hover:bg-black/5 transition-all duration-300 hover:scale-[1.02]"
-      >
-        <Plus className="mr-2 h-5 w-5" />
-        Add Question
-      </Button>
-
       <div ref={listRef} className="space-y-4">
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={questions.map((q) => q.id)} strategy={verticalListSortingStrategy}>
@@ -123,6 +115,15 @@ export default function QuestionList({ questions, onQuestionsChange, stepId }: Q
           </SortableContext>
         </DndContext>
       </div>
+
+      <Button
+        ref={buttonRef}
+        onClick={addQuestion}
+        className="w-full rounded-2xl border-2 border-dashed border-black/20 bg-transparent py-8 text-black hover:border-black/40 hover:bg-black/5 transition-all duration-300 hover:scale-[1.02]"
+      >
+        <Plus className="mr-2 h-5 w-5" />
+        Add Question
+      </Button>
     </div>
   )
 }

@@ -112,12 +112,15 @@ export default function FormPreviewLive({ formData, activeStepId, steps, onStepC
               </Label>
 
               {question.type === "short" && (
-                <Input placeholder="Your answer" className="border-black/20 bg-white text-black" />
+                <Input
+                  placeholder={question.placeholder && question.placeholder.length > 0 ? question.placeholder : "Your answer"}
+                  className="border-black/20 bg-white text-black"
+                />
               )}
 
               {question.type === "paragraph" && (
                 <Textarea
-                  placeholder="Your answer"
+                  placeholder={question.placeholder && question.placeholder.length > 0 ? question.placeholder : "Your answer"}
                   rows={4}
                   className="border-black/20 bg-white text-black resize-none"
                 />
