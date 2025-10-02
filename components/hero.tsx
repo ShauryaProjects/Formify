@@ -44,7 +44,7 @@ export default function Hero() {
   }, [])
 
   return (
-    <section ref={heroRef} className="relative flex min-h-screen flex-col bg-primary text-primary-foreground">
+    <section ref={heroRef} className="relative flex min-h-screen flex-col overflow-hidden bg-primary text-primary-foreground">
       {/* Hero Content */}
       <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
         <h1

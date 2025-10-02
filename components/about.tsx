@@ -1,67 +1,84 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { gsap } from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-import Image from "next/image"
 import { Button } from "@/components/ui/button"
 
-gsap.registerPlugin(ScrollTrigger)
-
 export default function About() {
+  const svgRef = useRef<HTMLObjectElement>(null)
   const sectionRef = useRef<HTMLElement>(null)
-  const imageRef = useRef<HTMLDivElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Image slides in from left
-      gsap.from(imageRef.current, {
-        opacity: 0,
-        x: -100,
-        duration: 1.2,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: imageRef.current,
-          start: "top 75%",
-        },
-      })
+    const handleSvgLoad = () => {
+      // Remove animated class initially to prevent auto-play
+      if (svgRef.current) {
+        const svgDoc = svgRef.current.contentDocument
+        if (svgDoc) {
+          const svgElement = svgDoc.querySelector('svg')
+          if (svgElement) {
+            svgElement.classList.remove('animated')
+          }
+        }
+      }
+    }
 
-      // Content slides in from right
-      gsap.from(contentRef.current, {
-        opacity: 0,
-        x: 100,
-        duration: 1.2,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: contentRef.current,
-          start: "top 75%",
-        },
-      })
-    }, sectionRef)
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && svgRef.current) {
+            // Access the SVG document and restart animation
+            const svgDoc = svgRef.current.contentDocument
+            if (svgDoc) {
+              const svgElement = svgDoc.querySelector('svg')
+              if (svgElement) {
+                svgElement.classList.remove('animated')
+                // Small delay to ensure class removal takes effect
+                setTimeout(() => {
+                  svgElement.classList.add('animated')
+                }, 50)
+              }
+            }
+          }
+        })
+      },
+      { threshold: 0.5 }
+    )
 
-    return () => ctx.revert()
+    // Add load event listener to SVG object
+    if (svgRef.current) {
+      svgRef.current.addEventListener('load', handleSvgLoad)
+    }
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+
+    return () => {
+      observer.disconnect()
+      if (svgRef.current) {
+        svgRef.current.removeEventListener('load', handleSvgLoad)
+      }
+    }
   }, [])
 
   return (
     <section ref={sectionRef} className="bg-secondary px-6 py-24 md:py-32 lg:py-40">
       <div className="mx-auto max-w-7xl">
         <div className="grid items-center gap-10 md:gap-12 lg:grid-cols-2 lg:gap-16">
-          {/* Image */}
-          <div ref={imageRef} className="relative overflow-hidden rounded-2xl">
-            <div className="aspect-[4/3] bg-gradient-to-br from-primary/20 to-primary/5">
-              <Image
-                src="https://res.cloudinary.com/ddf4mvmbe/image/upload/v1759263624/office_rm35pi.jpg"
-                alt="About our company"
-                width={800}
-                height={600}
-                className="h-full w-full object-cover grayscale transition-all duration-500 hover:grayscale-0"
+          {/* SVG Animation */}
+          <div className="relative overflow-hidden rounded-2xl">
+            <div className="aspect-[4/3] flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
+              <object
+                ref={svgRef}
+                data="/online-resume-animate.svg"
+                type="image/svg+xml"
+                className="h-full w-full object-contain"
+                aria-label="Online resume animation"
               />
             </div>
           </div>
 
           {/* Content */}
-          <div ref={contentRef} className="space-y-5 md:space-y-6">
+          <div className="space-y-5 md:space-y-6">
             <h2 className="text-balance text-3xl font-bold tracking-tight text-foreground md:text-4xl lg:text-5xl">
               Why Formify?
             </h2>

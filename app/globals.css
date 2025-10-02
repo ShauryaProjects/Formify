@@ -121,11 +121,17 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-x-hidden;
   }
 }
 
 /* Added smooth scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+/* Hide native password reveal/clear icons to avoid duplicate with custom toggle */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
 }
