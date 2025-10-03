@@ -16,7 +16,8 @@ export async function GET(request: NextRequest) {
     }
     
     const data = await response.json()
-    return NextResponse.json(data)
+    // Return the forms array directly for admin dashboard
+    return NextResponse.json(data.data || [])
   } catch (error) {
     console.error('Error fetching forms:', error)
     return NextResponse.json({ error: 'Failed to fetch forms' }, { status: 500 })
@@ -40,7 +41,8 @@ export async function POST(request: NextRequest) {
     }
     
     const data = await response.json()
-    return NextResponse.json(data)
+    // Return the form data directly
+    return NextResponse.json(data.data)
   } catch (error) {
     console.error('Error creating form:', error)
     return NextResponse.json({ error: 'Failed to create form' }, { status: 500 })

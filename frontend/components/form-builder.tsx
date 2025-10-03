@@ -42,13 +42,47 @@ export default function FormBuilder() {
   })
   const [savedFormId, setSavedFormId] = useState<string | null>(null)
   const [isPreviewOpen, setPreviewOpen] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   const activeStepQuestions = formData.questions.filter((q) => q.stepId === activeStepId)
 
-  const handleSaveForm = () => {
-    const formId = `form-${Date.now()}`
-    setSavedFormId(formId)
-    console.log("Form saved:", formData)
+  const handleSaveForm = async () => {
+    if (!formData.title.trim()) {
+      setSaveError("Please enter a form title")
+      return
+    }
+
+    setIsSaving(true)
+    setSaveError(null)
+
+    try {
+      const response = await fetch("/api/forms", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: formData.title,
+          description: formData.description,
+          questions: formData.questions,
+          steps: formData.steps,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to save form")
+      }
+
+      const savedForm = await response.json()
+      setSavedFormId(savedForm._id)
+      console.log("Form saved successfully:", savedForm)
+    } catch (error) {
+      console.error("Error saving form:", error)
+      setSaveError("Failed to save form. Please try again.")
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const handleQuestionsChange = (questions: Question[]) => {
@@ -67,10 +101,11 @@ export default function FormBuilder() {
           </Link>
           <Button
             onClick={handleSaveForm}
-            className="bg-black text-white hover:bg-black/90 transition-all duration-300 hover:scale-105"
+            disabled={isSaving}
+            className="bg-black text-white hover:bg-black/90 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Save className="mr-2 h-4 w-4" />
-            Save Form
+            {isSaving ? "Saving..." : "Save Form"}
           </Button>
         </div>
       </header>
@@ -108,26 +143,41 @@ export default function FormBuilder() {
                 stepId={activeStepId}
               />
 
+              {/* Save Error */}
+              {saveError && (
+                <div className="rounded-2xl border border-red-200 bg-red-50 p-6">
+                  <h3 className="mb-2 text-lg font-semibold text-red-800">Save Failed</h3>
+                  <p className="text-sm text-red-600">{saveError}</p>
+                </div>
+              )}
+
               {/* Saved Form Link */}
               {savedFormId && (
-                <div className="rounded-2xl border border-black/10 bg-black/5 p-6">
-                  <h3 className="mb-2 text-lg font-semibold text-black">Form Saved Successfully!</h3>
-                  <p className="mb-3 text-sm text-black/60">Share this link with others:</p>
+                <div className="rounded-2xl border border-green-200 bg-green-50 p-6">
+                  <h3 className="mb-2 text-lg font-semibold text-green-800">Form Saved Successfully!</h3>
+                  <p className="mb-3 text-sm text-green-600">Share this link with others:</p>
                   <div className="flex items-center gap-3">
                     <Input
                       readOnly
                       value={`${typeof window !== "undefined" ? window.location.origin : ""}/form/${savedFormId}`}
-                      className="flex-1 border-black/20 bg-white text-black"
+                      className="flex-1 border-green-300 bg-white text-black"
                     />
                     <Button
                       onClick={() => {
                         navigator.clipboard.writeText(`${window.location.origin}/form/${savedFormId}`)
                       }}
                       variant="outline"
-                      className="border-black/20 bg-transparent text-black hover:bg-black hover:text-white"
+                      className="border-green-300 bg-transparent text-green-700 hover:bg-green-100"
                     >
                       Copy Link
                     </Button>
+                  </div>
+                  <div className="mt-3">
+                    <Link href="/admin">
+                      <Button className="bg-green-600 text-white hover:bg-green-700">
+                        View in Admin Dashboard
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               )}
