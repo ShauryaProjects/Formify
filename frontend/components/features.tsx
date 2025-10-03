@@ -118,7 +118,7 @@ export default function Features() {
       <div className="mx-auto max-w-7xl">
         <h2
           ref={titleRef}
-          className="mb-20 text-balance text-center text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl"
+          className="opacity-0 mb-20 text-balance text-center text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl"
         >
           Built for excellence
         </h2>
@@ -130,7 +130,7 @@ export default function Features() {
               ref={(el) => {
                 cardsRef.current[index] = el
               }}
-              className={`group relative overflow-hidden rounded-2xl p-8 shadow-lg transition-all hover:scale-[1.02] hover:shadow-2xl md:p-10 ${
+              className={`opacity-0 group relative overflow-hidden rounded-2xl p-8 shadow-lg transition-all hover:scale-[1.02] hover:shadow-2xl md:p-10 ${
                 index % 2 === 0 ? "bg-primary text-primary-foreground" : "bg-card text-card-foreground"
               }`}
             >

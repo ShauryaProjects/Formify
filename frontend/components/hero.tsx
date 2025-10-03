@@ -48,17 +48,17 @@ export default function Hero() {
       <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
         <h1
           ref={headingRef}
-          className="max-w-5xl text-balance font-sans text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl will-change-transform"
+          className="opacity-0 max-w-5xl text-balance font-sans text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl will-change-transform"
         >
           Create Forms. Share Links. Collect Responses.
         </h1>
         <p
           ref={subheadingRef}
-          className="mt-6 max-w-2xl text-pretty text-base leading-relaxed text-primary-foreground/70 sm:text-lg md:mt-8 md:text-xl will-change-transform"
+          className="opacity-0 mt-6 max-w-2xl text-pretty text-base leading-relaxed text-primary-foreground/70 sm:text-lg md:mt-8 md:text-xl will-change-transform"
         >
           Build beautiful forms in minutes. Share them instantly and track responses effortlessly — all in one place.
         </p>
-        <div ref={buttonRef} className="mt-12 will-change-transform">
+        <div ref={buttonRef} className="opacity-0 mt-12 will-change-transform">
           <Button
             size="lg"
             className="group h-12 rounded-2xl bg-primary-foreground px-8 text-base font-semibold text-primary transition-all hover:scale-105 hover:shadow-2xl md:h-14 md:px-10 md:text-lg"
