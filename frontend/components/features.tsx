@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useLayoutEffect, useRef } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { Card } from "@/components/ui/card"
@@ -66,34 +66,46 @@ export default function Features() {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const cardsRef = useRef<(HTMLDivElement | null)[]>([])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const ctx = gsap.context(() => {
+      // Hide elements before first paint
+      gsap.set(titleRef.current, { opacity: 0 })
+      gsap.set(cardsRef.current, { opacity: 0, y: 10 })
+
       // Title animation
-      gsap.from(titleRef.current, {
-        opacity: 0,
-        y: 40,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: titleRef.current,
-          start: "top 80%",
-        },
-      })
+      gsap.fromTo(
+        titleRef.current,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: titleRef.current,
+            start: "top 80%",
+          },
+        }
+      )
 
       // Staggered card animations
       cardsRef.current.forEach((card, index) => {
         if (card) {
-          gsap.from(card, {
-            opacity: 0,
-            y: 60,
-            duration: 0.8,
-            delay: index * 0.15,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 85%",
-            },
-          })
+          gsap.fromTo(
+            card,
+            { opacity: 0, y: 60 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              delay: index * 0.15,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 85%",
+              },
+            }
+          )
         }
       })
     }, sectionRef)

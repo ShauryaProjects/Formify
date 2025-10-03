@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useLayoutEffect, useRef } from "react"
 import { gsap } from "gsap"
 import { Button } from "@/components/ui/button"
 
@@ -10,34 +10,33 @@ export default function Hero() {
   const subheadingRef = useRef<HTMLParagraphElement>(null)
   const buttonRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      // Heading animation
-      gsap.from(headingRef.current, {
+      // Ensure elements are hidden before first paint to avoid flash
+      gsap.set([headingRef.current, subheadingRef.current, buttonRef.current], {
         opacity: 0,
-        y: 60,
-        duration: 1,
-        delay: 0.3,
-        ease: "power3.out",
       })
+
+      // Heading animation
+      gsap.fromTo(
+        headingRef.current,
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, duration: 1, delay: 0.2, ease: "power3.out" }
+      )
 
       // Subheading animation
-      gsap.from(subheadingRef.current, {
-        opacity: 0,
-        y: 40,
-        duration: 1,
-        delay: 0.5,
-        ease: "power3.out",
-      })
+      gsap.fromTo(
+        subheadingRef.current,
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 1, delay: 0.35, ease: "power3.out" }
+      )
 
       // Button animation with scale
-      gsap.from(buttonRef.current, {
-        opacity: 0,
-        scale: 0.9,
-        duration: 0.8,
-        delay: 0.7,
-        ease: "back.out(1.7)",
-      })
+      gsap.fromTo(
+        buttonRef.current,
+        { opacity: 0, scale: 0.92 },
+        { opacity: 1, scale: 1, duration: 0.8, delay: 0.5, ease: "back.out(1.7)" }
+      )
     }, heroRef)
 
     return () => ctx.revert()
@@ -49,17 +48,17 @@ export default function Hero() {
       <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
         <h1
           ref={headingRef}
-          className="max-w-5xl text-balance font-sans text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
+          className="max-w-5xl text-balance font-sans text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl will-change-transform"
         >
           Create Forms. Share Links. Collect Responses.
         </h1>
         <p
           ref={subheadingRef}
-          className="mt-6 max-w-2xl text-pretty text-base leading-relaxed text-primary-foreground/70 sm:text-lg md:mt-8 md:text-xl"
+          className="mt-6 max-w-2xl text-pretty text-base leading-relaxed text-primary-foreground/70 sm:text-lg md:mt-8 md:text-xl will-change-transform"
         >
           Build beautiful forms in minutes. Share them instantly and track responses effortlessly — all in one place.
         </p>
-        <div ref={buttonRef} className="mt-12">
+        <div ref={buttonRef} className="mt-12 will-change-transform">
           <Button
             size="lg"
             className="group h-12 rounded-2xl bg-primary-foreground px-8 text-base font-semibold text-primary transition-all hover:scale-105 hover:shadow-2xl md:h-14 md:px-10 md:text-lg"
