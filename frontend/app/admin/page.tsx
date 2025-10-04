@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import { gsap } from "gsap"
-import { LayoutGrid, FileText, Settings as SettingsIcon, LogOut } from "lucide-react"
+import { LayoutGrid, FileText, Settings as SettingsIcon, LogOut, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -46,24 +46,37 @@ export default function AdminDashboardPage() {
   const tableRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
+  const fetchForms = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+      const res = await fetch("/api/forms")
+      if (!res.ok) throw new Error("Failed to load forms")
+      const data = (await res.json()) as FormItem[]
+      setForms(data)
+      setStats((s) => ({ ...s, totalForms: data.length }))
+    } catch (e: any) {
+      setError(e?.message ?? "Unknown error")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   useEffect(() => {
     // Initial load of forms
-    const fetchForms = async () => {
-      try {
-        setIsLoading(true)
-        setError(null)
-        const res = await fetch("/api/forms")
-        if (!res.ok) throw new Error("Failed to load forms")
-        const data = (await res.json()) as FormItem[]
-        setForms(data)
-        setStats((s) => ({ ...s, totalForms: data.length }))
-      } catch (e: any) {
-        setError(e?.message ?? "Unknown error")
-      } finally {
-        setIsLoading(false)
+    fetchForms()
+  }, [])
+
+  // Refresh forms when page becomes visible (e.g., coming back from form builder)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchForms()
       }
     }
-    fetchForms()
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [])
 
   useEffect(() => {
@@ -243,7 +256,20 @@ export default function AdminDashboardPage() {
 
             {/* Forms Section */}
             {activeSection === "forms" && !selectedForm && (
-              <div ref={listRef} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div>
+                <div className="mb-6 flex items-center justify-between">
+                  <h2 className="text-2xl font-bold">Forms</h2>
+                  <Button
+                    onClick={fetchForms}
+                    disabled={isLoading}
+                    variant="outline"
+                    className="flex items-center gap-2"
+                  >
+                    <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                    Refresh
+                  </Button>
+                </div>
+                <div ref={listRef} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {isLoading && <PlaceholderCard>Loading forms...</PlaceholderCard>}
                 {error && <PlaceholderCard>{error}</PlaceholderCard>}
                 {!isLoading && !error && filteredForms.length === 0 && (
@@ -286,6 +312,7 @@ export default function AdminDashboardPage() {
                     </div>
                   </Card>
                 ))}
+                </div>
               </div>
             )}
 

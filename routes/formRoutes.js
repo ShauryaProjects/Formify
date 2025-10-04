@@ -42,12 +42,21 @@ router.post("/", async (req, res) => {
     if (questions && questions.length > 0) {
       // Group questions by stepId
       const questionsByStep = {}
+      // Map frontend question types to backend types
+      const typeMapping = {
+        'short': 'shortAnswer',
+        'paragraph': 'paragraph',
+        'multiple': 'multipleChoice',
+        'checkbox': 'checkbox',
+        'dropdown': 'dropdown'
+      }
+
       questions.forEach(q => {
         if (!questionsByStep[q.stepId]) {
           questionsByStep[q.stepId] = []
         }
         questionsByStep[q.stepId].push({
-          type: q.type,
+          type: typeMapping[q.type] || q.type,
           label: q.text,
           options: q.options || [],
           required: q.required || false
