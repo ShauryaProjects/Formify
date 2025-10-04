@@ -2,36 +2,80 @@ const express = require("express")
 const router = express.Router()
 const Form = require("../models/Form")
 
+// GET /api/forms - Get all forms
+router.get("/", async (req, res) => {
+  try {
+    const forms = await Form.find({})
+      .select("title description createdAt _id")
+      .sort({ createdAt: -1 })
+
+    res.json({
+      success: true,
+      data: forms,
+      message: "Forms retrieved successfully",
+    })
+  } catch (error) {
+    console.error("Error fetching forms:", error)
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch forms",
+      error: error.message,
+    })
+  }
+})
+
 // POST /api/forms - Create a new form
 router.post("/", async (req, res) => {
   try {
-    const { title, description, steps, createdBy } = req.body
+    const { title, description, questions, steps, createdBy } = req.body
 
-    if (!title || !steps || steps.length === 0) {
+    if (!title) {
       return res.status(400).json({
         success: false,
-        message: "Title and at least one step are required",
+        message: "Title is required",
+      })
+    }
+
+    // If questions are provided as a flat array, organize them by stepId
+    let organizedSteps = steps || []
+    
+    if (questions && questions.length > 0) {
+      // Group questions by stepId
+      const questionsByStep = {}
+      questions.forEach(q => {
+        if (!questionsByStep[q.stepId]) {
+          questionsByStep[q.stepId] = []
+        }
+        questionsByStep[q.stepId].push({
+          type: q.type,
+          label: q.text,
+          options: q.options || [],
+          required: q.required || false
+        })
+      })
+
+      // Create steps with their questions
+      organizedSteps = Object.keys(questionsByStep).map(stepId => {
+        const step = steps?.find(s => s.id === stepId) || { id: stepId, title: `Step ${stepId.split('-')[1] || '1'}` }
+        return {
+          title: step.title,
+          questions: questionsByStep[stepId]
+        }
       })
     }
 
     const form = new Form({
       title,
       description,
-      steps,
+      steps: organizedSteps,
       createdBy: createdBy || "anonymous",
     })
 
     await form.save()
 
-    const sharableLink = `${process.env.FRONTEND_URL || "http://localhost:3000"}/form/${form._id}`
-
     res.status(201).json({
       success: true,
-      data: {
-        formId: form._id,
-        sharableLink,
-        form,
-      },
+      data: form,
       message: "Form created successfully",
     })
   } catch (error) {
